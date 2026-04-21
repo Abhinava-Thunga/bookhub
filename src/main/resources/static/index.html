@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BookHub Store</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f9;
+    }
+
+    h1 {
+      text-align: center;
+      background: #222;
+      color: white;
+      padding: 15px;
+      margin: 0;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      width: 250px;
+      margin: 15px;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    input {
+      width: 60px;
+      padding: 6px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .order-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 25px;
+      font-size: 18px;
+      background: green;
+    }
+
+    .order-btn:hover {
+      background: darkgreen;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>BookHub</h1>
+
+<div id="books" class="container"></div>
+
+<button class="order-btn" onclick="placeOrder()">Place Order</button>
+
+<script>
+
+  async function loadBooks() {
+    let res = await fetch("http://localhost:8080/books");
+    let json = await res.json();
+
+    let books = json.data;
+    let html = "";
+
+    books.forEach(b => {
+
+      if (b.quantity === 0) return; // ✅ HIDE BOOK
+
+      html += `
+    <div class="card">
+        <img src="${b.imageUrl}" onerror="this.src='https://via.placeholder.com/200'">
+        <h3>${b.title}</h3>
+        <p>${b.author}</p>
+        <p>₹${b.price}</p>
+        <p>Stock: ${b.quantity}</p>
+
+        <input type="number" id="qty-${b.id}" min="1">
+
+        <button onclick="addToCart(${b.id}, ${b.quantity})">
+            Add to Cart
+        </button>
+    </div>`;
+    });
+
+    document.getElementById("books").innerHTML = html;
+  }
+
+  // 🛒 ADD TO CART
+  async function addToCart(id, stock) {
+
+    let input = document.getElementById("qty-" + id);
+    let qty = parseInt(input.value);
+
+    if (!qty || qty <= 0) {
+      alert("Enter valid quantity");
+      return;
+    }
+
+    if (qty > stock) {
+      alert("❌ Not enough stock available");
+      return;
+    }
+
+    try {
+      await fetch(`http://localhost:8080/cart/${id}/${qty}`, {
+        method: "POST"
+      });
+
+      alert("✅ Added to cart");
+
+      // 🔥 CLEAR INPUT AFTER ADD
+      document.getElementById("qty-" + id).value = "";
+
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add to cart");
+    }
+  }
+
+  // 📦 PLACE ORDER
+  async function placeOrder() {
+    try {
+      let res = await fetch("http://localhost:8080/orders", {
+        method: "POST"
+      });
+
+      if (!res.ok) {
+        let text = await res.text();
+        alert("❌ " + text);
+        return;
+      }
+
+      // 🔥 SAFE PARSE
+      let text = await res.text();
+      let data = text ? JSON.parse(text) : null;
+
+      alert("🎉 Order placed successfully!");
+
+      loadBooks();
+
+    } catch (err) {
+      console.error(err);
+      alert("❌ Server error");
+    }
+  }
+
+  // 🚀 LOAD ON START
+  loadBooks();
+
+</script>
+
+</body>
+</html>
