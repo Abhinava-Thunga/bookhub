@@ -3,8 +3,11 @@ package com.bookhub.bookstore.controller;
 import com.bookhub.bookstore.dto.ApiResponse;
 import com.bookhub.bookstore.entity.Book;
 import com.bookhub.bookstore.service.BookService;
-import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -18,28 +21,35 @@ public class BookController {
         this.service = service;
     }
 
-    // ✅ GET ALL BOOKS
     @GetMapping
     public ApiResponse<List<Book>> getBooks() {
-        return new ApiResponse<>(true, "Books fetched successfully", service.getAllBooks());
+        return new ApiResponse<>(true, "Books fetched", service.getAllBooks());
     }
 
-    // ✅ ADD BOOK
     @PostMapping
     public ApiResponse<Book> addBook(@RequestBody Book book) {
-        return new ApiResponse<>(true, "Book added successfully", service.saveBook(book));
+        return new ApiResponse<>(true, "Book added", service.saveBook(book));
     }
 
-    // ✅ UPDATE BOOK
-    @PutMapping("/{id}")
-    public ApiResponse<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
-        return new ApiResponse<>(true, "Book updated successfully", service.updateBook(id, book));
-    }
-
-    // ✅ DELETE BOOK
     @DeleteMapping("/{id}")
     public ApiResponse<String> deleteBook(@PathVariable Long id) {
         service.deleteBook(id);
-        return new ApiResponse<>(true, "Book deleted successfully", null);
+        return new ApiResponse<>(true, "Book deleted", null);
+    }
+
+    // 🔥 IMAGE UPLOAD API
+    @PostMapping("/upload")
+    public String uploadImage(@RequestParam("file") MultipartFile file) throws Exception {
+
+        String folder = "uploads/";
+        File dir = new File(folder);
+        if (!dir.exists()) dir.mkdirs();
+
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        String path = folder + fileName;
+
+        file.transferTo(new File(path));
+
+        return "http://localhost:8080/" + path;
     }
 }

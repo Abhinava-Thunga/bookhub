@@ -11,15 +11,38 @@ public class CartItem {
 
     private int quantity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "book_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "book_id")
     private Book book;
 
-    public Long getId() { return id; }
+    // ✅ DEFAULT CONSTRUCTOR
+    public CartItem() {}
 
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    // ✅ GETTERS
 
-    public Book getBook() { return book; }
-    public void setBook(Book book) { this.book = book; }
+    public Long getId() {
+        return id;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public Book getBook() {   // 🔥 THIS WAS MISSING
+        return book;
+    }
+
+    // ✅ SETTERS
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setBook(Book book) {  // 🔥 ALSO IMPORTANT
+        this.book = book;
+    }
 }

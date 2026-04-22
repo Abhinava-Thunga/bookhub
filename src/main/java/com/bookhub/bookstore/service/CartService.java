@@ -1,13 +1,10 @@
 package com.bookhub.bookstore.service;
 
-import com.bookhub.bookstore.entity.Book;
-import com.bookhub.bookstore.entity.CartItem;
-import com.bookhub.bookstore.repository.BookRepository;
-import com.bookhub.bookstore.repository.CartRepository;
+import com.bookhub.bookstore.entity.*;
+import com.bookhub.bookstore.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CartService {
@@ -20,42 +17,19 @@ public class CartService {
         this.bookRepo = bookRepo;
     }
 
-    public CartItem addToCart(Long bookId, int qty) {
+    public CartItem addToCart(Long id, int qty) {
 
-        Book book = bookRepo.findById(bookId)
+        Book book = bookRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found"));
 
-        if (book.getQuantity() <= 0) {
-            throw new RuntimeException("Book out of stock");
-        }
-
-        if (qty > book.getQuantity()) {
+        if (qty > book.getQuantity())
             throw new RuntimeException("Stock not available");
-        }
 
-        // 🔥 CHECK IF ITEM ALREADY EXISTS
-        List<CartItem> items = cartRepo.findAll();
+        CartItem item = new CartItem();
+        item.setBook(book);
+        item.setQuantity(qty);
 
-        for (CartItem item : items) {
-            if (item.getBook().getId().equals(bookId)) {
-
-                int newQty = item.getQuantity() + qty;
-
-                if (newQty > book.getQuantity()) {
-                    throw new RuntimeException("Stock not available");
-                }
-
-                item.setQuantity(newQty);
-                return cartRepo.save(item);
-            }
-        }
-
-        // ✅ CREATE NEW IF NOT EXISTS
-        CartItem newItem = new CartItem();
-        newItem.setBook(book); // ✅ CORRECT (managed entity)
-        newItem.setQuantity(qty);
-
-        return cartRepo.save(newItem);
+        return cartRepo.save(item);
     }
 
     public List<CartItem> getCart() {

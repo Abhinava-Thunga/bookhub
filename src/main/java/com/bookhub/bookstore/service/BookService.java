@@ -23,22 +23,7 @@ public class BookService {
         return repo.save(book);
     }
 
-    public Book updateBook(Long id, Book book) {
-        Book existing = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
-
-        existing.setTitle(book.getTitle());
-        existing.setAuthor(book.getAuthor());
-        existing.setPrice(book.getPrice());
-        existing.setQuantity(book.getQuantity());
-
-        return repo.save(existing);
-    }
-
     public void deleteBook(Long id) {
-        if (!repo.existsById(id)) {
-            throw new RuntimeException("Book not found");
-        }
         repo.deleteById(id);
     }
 }

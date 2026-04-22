@@ -3,8 +3,8 @@ package com.bookhub.bookstore.controller;
 import com.bookhub.bookstore.dto.ApiResponse;
 import com.bookhub.bookstore.entity.CartItem;
 import com.bookhub.bookstore.service.CartService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.*;  // ✅ IMPORTANT
 
 import java.util.List;
 
@@ -19,15 +19,13 @@ public class CartController {
         this.service = service;
     }
 
-    @PostMapping("/{bookId}/{qty}")
-    public CartItem addToCart(@PathVariable Long bookId, @PathVariable int qty) {
-        return service.addToCart(bookId, qty);
+    @PostMapping("/{id}/{qty}")
+    public ApiResponse<CartItem> add(@PathVariable Long id, @PathVariable int qty) {
+        return new ApiResponse<>(true, "Added", service.addToCart(id, qty));
     }
 
     @GetMapping
-    public List<CartItem> getCart() {
+    public List<CartItem> get() {
         return service.getCart();
-
-
     }
 }

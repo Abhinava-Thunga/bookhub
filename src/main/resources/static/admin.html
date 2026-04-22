@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI';
+            background: #f4f6f9;
+        }
+
+        header {
+            background: #1d3557;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .form {
+            background: white;
+            padding: 20px;
+            width: 350px;
+            margin: 20px auto;
+            border-radius: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #1d3557;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>Admin Dashboard</h2>
+</header>
+
+<div class="form">
+
+    <input id="title" placeholder="Title">
+    <input id="author" placeholder="Author">
+    <input id="price" placeholder="Price">
+    <input id="quantity" placeholder="Quantity">
+
+    <!-- 🔥 NEW -->
+    <input id="imageUrl" placeholder="Image URL (optional)">
+    <input type="file" id="imageFile">
+
+    <img id="preview" width="100">
+
+    <button onclick="addBook()">Add Book</button>
+</div>
+
+<div class="grid" id="books"></div>
+
+<script>
+
+    // 🔥 IMAGE PREVIEW
+    document.getElementById("imageFile").onchange = function(e) {
+        document.getElementById("preview").src =
+            URL.createObjectURL(e.target.files[0]);
+    };
+
+    // ADD BOOK
+    async function addBook() {
+
+        let fileInput = document.getElementById("imageFile");
+        let imageUrl = document.getElementById("imageUrl").value;
+
+        // 🔥 UPLOAD FILE IF EXISTS
+        if (fileInput.files.length > 0) {
+
+            let formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            let res = await fetch("http://localhost:8080/books/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            imageUrl = await res.text();
+        }
+
+        let book = {
+            title: document.getElementById("title").value,
+            author: document.getElementById("author").value,
+            price: parseFloat(document.getElementById("price").value),
+            quantity: parseInt(document.getElementById("quantity").value),
+            imageUrl: imageUrl
+        };
+
+        await fetch("http://localhost:8080/books", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(book)
+        });
+
+        alert("Book added!");
+
+        loadBooks();
+    }
+
+    // LOAD BOOKS
+    async function loadBooks() {
+
+        let res = await fetch("http://localhost:8080/books");
+        let json = await res.json();
+
+        let html = "";
+
+        json.data.forEach(b => {
+
+            html += `
+    <div class="card">
+      <img src="${b.imageUrl}">
+      <h4>${b.title}</h4>
+      <p>${b.author}</p>
+      <p>₹${b.price}</p>
+      <p>Stock: ${b.quantity}</p>
+      <button onclick="deleteBook(${b.id})">Delete</button>
+    </div>`;
+        });
+
+        document.getElementById("books").innerHTML = html;
+    }
+
+    // DELETE
+    async function deleteBook(id) {
+        await fetch("http://localhost:8080/books/" + id, { method: "DELETE" });
+        loadBooks();
+    }
+
+    // INIT
+    loadBooks();
+
+</script>
+
+</body>
+</html>

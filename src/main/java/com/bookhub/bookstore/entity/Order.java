@@ -12,8 +12,32 @@ public class Order {
 
     private double totalPrice;
 
-    public Long getId() { return id; }
+    @Column(nullable = false)
+    private String userId; // 🔥 NEW
 
-    public double getTotalPrice() { return totalPrice; }
-    public void setTotalPrice(double totalPrice) { this.totalPrice = totalPrice; }
+    public Order() {}
+
+    public Long getId() {
+        return id;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public String getUserId() {   // 🔥 NEW
+        return userId;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public void setUserId(String userId) {   // 🔥 NEW
+        this.userId = userId;
+    }
 }

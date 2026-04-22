@@ -15,21 +15,58 @@ public class Book {
     private int quantity;
     private String imageUrl;
 
-    // getters & setters
-    public Long getId() { return id; }
+    // ✅ DEFAULT CONSTRUCTOR
+    public Book() {}
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    // 🔹 GETTERS
 
-    public String getAuthor() { return author; }
-    public void setAuthor(String author) { this.author = author; }
+    public Long getId() {
+        return id;
+    }
 
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    public String getTitle() {
+        return title;
+    }
 
-    public int getQuantity() { return quantity; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
+    public String getAuthor() {
+        return author;
+    }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public double getPrice() {
+        return price;
+    }
+
+    public int getQuantity() {   // 🔥 THIS WAS MISSING
+        return quantity;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    // 🔹 SETTERS
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setQuantity(int quantity) {  // 🔥 ALSO IMPORTANT
+        this.quantity = quantity;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

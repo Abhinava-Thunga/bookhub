@@ -1,11 +1,7 @@
 package com.bookhub.bookstore.service;
 
-import com.bookhub.bookstore.entity.Book;
-import com.bookhub.bookstore.entity.CartItem;
-import com.bookhub.bookstore.entity.Order;
-import com.bookhub.bookstore.repository.BookRepository;
-import com.bookhub.bookstore.repository.CartRepository;
-import com.bookhub.bookstore.repository.OrderRepository;
+import com.bookhub.bookstore.entity.*;
+import com.bookhub.bookstore.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,54 +19,40 @@ public class OrderService {
         this.orderRepo = orderRepo;
     }
 
-    public Order placeOrder() {
+    // 🔥 PLACE ORDER WITH USER
+    public Order placeOrder(String userId) {
 
-        List<CartItem> cartItems = cartRepo.findAll();
+        List<CartItem> items = cartRepo.findAll();
 
-        if (cartItems.isEmpty()) {
+        if (items.isEmpty())
             throw new RuntimeException("Cart is empty");
-        }
 
         double total = 0;
 
-        // 🔥 VALIDATION + CALCULATION
-        for (CartItem item : cartItems) {
+        for (CartItem item : items) {
 
             Book book = item.getBook();
 
-            if (item.getQuantity() > book.getQuantity()) {
-                throw new RuntimeException("Stock not available for " + book.getTitle());
-            }
+            if (item.getQuantity() > book.getQuantity())
+                throw new RuntimeException("Stock not available");
 
             total += item.getQuantity() * book.getPrice();
-        }
 
-        // 🔥 UPDATE STOCK
-        for (CartItem item : cartItems) {
-
-            Book book = item.getBook();
-
-            int newQty = book.getQuantity() - item.getQuantity();
-            book.setQuantity(newQty);
-
+            book.setQuantity(book.getQuantity() - item.getQuantity());
             bookRepo.save(book);
         }
 
-        // 🔥 CLEAR CART FIRST (VERY IMPORTANT)
         cartRepo.deleteAll();
 
-        // 🔥 OPTIONAL: DELETE BOOKS WITH 0 STOCK (SAFE NOW)
-        List<Book> books = bookRepo.findAll();
-        for (Book book : books) {
-            if (book.getQuantity() == 0) {
-                bookRepo.delete(book); // ✅ SAFE (cart already cleared)
-            }
-        }
-
-        // 🔥 SAVE ORDER
         Order order = new Order();
         order.setTotalPrice(total);
+        order.setUserId(userId); // 🔥 IMPORTANT
 
         return orderRepo.save(order);
+    }
+
+    // 🔥 GET USER ORDERS
+    public List<Order> getOrdersByUser(String userId) {
+        return orderRepo.findByUserId(userId);
     }
 }
