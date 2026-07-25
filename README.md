@@ -114,14 +114,6 @@ mvn spring-boot:run
 
 Open `index.html` in your browser or serve using Live Server.
 
-## 📷 Screenshots
-
-- Home Page
-- Shopping Cart
-- Order History
-- Admin Dashboard
-
-(Add screenshots here)
 
 ## 📈 Future Enhancements
 
@@ -135,19 +127,5 @@ Open `index.html` in your browser or serve using Live Server.
 - React-based Frontend
 - Mobile Application
 
-## 👨‍💻 Authors
-
-- Abhinava Thunga K N
-- Swastik Vinayak Hegde
-- Nagaraj Shripad Bhat
-
-## 🎓 Academic Project
-
-Mini Project submitted to:
-
-**Presidency University**  
-Department of Information Science & Engineering
-
----
 
 ⭐ If you like this project, don't forget to give it a star!
