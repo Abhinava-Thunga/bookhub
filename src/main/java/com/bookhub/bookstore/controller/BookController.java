@@ -3,7 +3,6 @@ package com.bookhub.bookstore.controller;
 import com.bookhub.bookstore.dto.ApiResponse;
 import com.bookhub.bookstore.entity.Book;
 import com.bookhub.bookstore.service.BookService;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,13 +36,14 @@ public class BookController {
         return new ApiResponse<>(true, "Book deleted", null);
     }
 
-    // 🔥 IMAGE UPLOAD API
     @PostMapping("/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file) throws Exception {
 
         String folder = "uploads/";
         File dir = new File(folder);
-        if (!dir.exists()) dir.mkdirs();
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         String path = folder + fileName;

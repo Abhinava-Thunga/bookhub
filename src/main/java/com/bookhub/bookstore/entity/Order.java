@@ -13,7 +13,7 @@ public class Order {
     private double totalPrice;
 
     @Column(nullable = false)
-    private String userId; // 🔥 NEW
+    private String userId;
 
     public Order() {}
 
@@ -25,7 +25,7 @@ public class Order {
         return totalPrice;
     }
 
-    public String getUserId() {   // 🔥 NEW
+    public String getUserId() {
         return userId;
     }
 
@@ -37,7 +37,7 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public void setUserId(String userId) {   // 🔥 NEW
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 }

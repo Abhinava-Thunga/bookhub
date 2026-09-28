@@ -1,7 +1,11 @@
 package com.bookhub.bookstore.service;
 
-import com.bookhub.bookstore.entity.*;
-import com.bookhub.bookstore.repository.*;
+import com.bookhub.bookstore.entity.Book;
+import com.bookhub.bookstore.entity.CartItem;
+import com.bookhub.bookstore.entity.Order;
+import com.bookhub.bookstore.repository.BookRepository;
+import com.bookhub.bookstore.repository.CartRepository;
+import com.bookhub.bookstore.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,13 +23,13 @@ public class OrderService {
         this.orderRepo = orderRepo;
     }
 
-    // 🔥 PLACE ORDER WITH USER
     public Order placeOrder(String userId) {
 
         List<CartItem> items = cartRepo.findAll();
 
-        if (items.isEmpty())
+        if (items.isEmpty()) {
             throw new RuntimeException("Cart is empty");
+        }
 
         double total = 0;
 
@@ -33,8 +37,9 @@ public class OrderService {
 
             Book book = item.getBook();
 
-            if (item.getQuantity() > book.getQuantity())
+            if (item.getQuantity() > book.getQuantity()) {
                 throw new RuntimeException("Stock not available");
+            }
 
             total += item.getQuantity() * book.getPrice();
 
@@ -46,12 +51,11 @@ public class OrderService {
 
         Order order = new Order();
         order.setTotalPrice(total);
-        order.setUserId(userId); // 🔥 IMPORTANT
+        order.setUserId(userId);
 
         return orderRepo.save(order);
     }
 
-    // 🔥 GET USER ORDERS
     public List<Order> getOrdersByUser(String userId) {
         return orderRepo.findByUserId(userId);
     }

@@ -1,0 +1,297 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "BookHub — Runtime Architecture",
+    "subtitle": "Full-Stack Bookstore • Java 21 / Spring Boot 4 / Hibernate / MySQL",
+    "output": "bookhub-architecture.html",
+    "quality_profile": "showcase",
+    "animation": "trace",
+    "views": [
+      {
+        "id": "request-flow",
+        "label": "HTTP Request Flow",
+        "focus": ["browser", "tomcat", "book_ctrl", "cart_ctrl", "order_ctrl"],
+        "note": "Follow an HTTP request from browser through Tomcat to controllers."
+      },
+      {
+        "id": "business-logic",
+        "label": "Business Logic & Data",
+        "focus": ["book_svc", "cart_svc", "order_svc", "book_repo", "cart_repo", "order_repo", "hibernate", "mysql"],
+        "note": "Services enforce business rules; repositories generate CRUD via Spring Data JPA."
+      },
+      {
+        "id": "checkout-path",
+        "label": "Checkout & Stock Deduction",
+        "focus": ["browser", "order_ctrl", "order_svc", "cart_repo", "book_repo", "order_repo", "hibernate", "mysql"],
+        "note": "OrderService orchestrates multi-table checkout across cart, books, and orders."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Browser Client",
+      "sublabel": "HTML5 / ES6 Fetch",
+      "pos": [30, 220],
+      "size": [130, 64],
+      "tag": "SPA / Vanilla JS"
+    },
+    {
+      "id": "postman",
+      "type": "external",
+      "label": "Postman",
+      "sublabel": "REST Client",
+      "pos": [30, 380],
+      "size": [130, 64],
+      "tag": "API Testing"
+    },
+    {
+      "id": "api_resp",
+      "type": "backend",
+      "label": "ApiResponse<T>",
+      "sublabel": "DTO envelope",
+      "pos": [210, 110],
+      "size": [130, 64],
+      "tag": "success, msg, data"
+    },
+    {
+      "id": "tomcat",
+      "type": "cloud",
+      "label": "Embedded Tomcat",
+      "sublabel": ":8080 DispatcherServlet",
+      "pos": [210, 290],
+      "size": [130, 64],
+      "tag": "Spring Web MVC"
+    },
+    {
+      "id": "err_handler",
+      "type": "security",
+      "label": "ExceptionHandler",
+      "sublabel": "@ControllerAdvice",
+      "pos": [210, 470],
+      "size": [130, 64],
+      "tag": "HTTP 400 / 500"
+    },
+    {
+      "id": "book_ctrl",
+      "type": "backend",
+      "label": "BookController",
+      "sublabel": "/books endpoints",
+      "pos": [390, 110],
+      "size": [130, 64],
+      "tag": "GET POST DEL /books"
+    },
+    {
+      "id": "cart_ctrl",
+      "type": "backend",
+      "label": "CartController",
+      "sublabel": "/cart endpoints",
+      "pos": [390, 290],
+      "size": [130, 64],
+      "tag": "POST GET /cart"
+    },
+    {
+      "id": "order_ctrl",
+      "type": "backend",
+      "label": "OrderController",
+      "sublabel": "/orders endpoints",
+      "pos": [390, 470],
+      "size": [130, 64],
+      "tag": "POST GET /orders"
+    },
+    {
+      "id": "book_svc",
+      "type": "backend",
+      "label": "BookService",
+      "sublabel": "@Service",
+      "pos": [570, 110],
+      "size": [130, 64],
+      "tag": "CRUD + upload"
+    },
+    {
+      "id": "cart_svc",
+      "type": "backend",
+      "label": "CartService",
+      "sublabel": "@Service",
+      "pos": [570, 290],
+      "size": [130, 64],
+      "tag": "Stock validation"
+    },
+    {
+      "id": "order_svc",
+      "type": "backend",
+      "label": "OrderService",
+      "sublabel": "@Service",
+      "pos": [570, 470],
+      "size": [130, 64],
+      "tag": "Checkout logic"
+    },
+    {
+      "id": "book_repo",
+      "type": "database",
+      "label": "BookRepository",
+      "sublabel": "JpaRepository<Book>",
+      "pos": [750, 110],
+      "size": [135, 64],
+      "tag": "findAll save delete"
+    },
+    {
+      "id": "cart_repo",
+      "type": "database",
+      "label": "CartRepository",
+      "sublabel": "JpaRepository<CartItem>",
+      "pos": [750, 290],
+      "size": [135, 64],
+      "tag": "findAll save delete"
+    },
+    {
+      "id": "order_repo",
+      "type": "database",
+      "label": "OrderRepository",
+      "sublabel": "JpaRepository<Order>",
+      "pos": [750, 470],
+      "size": [135, 64],
+      "tag": "save findByUserId"
+    },
+    {
+      "id": "hibernate",
+      "type": "backend",
+      "label": "Hibernate ORM",
+      "sublabel": "JPA / HikariCP",
+      "pos": [935, 290],
+      "size": [130, 64],
+      "tag": "DDL auto-update"
+    },
+    {
+      "id": "mysql",
+      "type": "database",
+      "label": "MySQL 8.0+",
+      "sublabel": "bookstore_db :3306",
+      "pos": [1115, 290],
+      "size": [130, 64],
+      "tag": "ACID / InnoDB"
+    },
+    {
+      "id": "filesystem",
+      "type": "external",
+      "label": "Filesystem",
+      "sublabel": "uploads/ folder",
+      "pos": [1115, 470],
+      "size": [130, 64],
+      "tag": "Cover images"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Spring Boot Application (JVM / Java 21)",
+      "wraps": ["tomcat", "book_ctrl", "cart_ctrl", "order_ctrl", "api_resp", "err_handler", "book_svc", "cart_svc", "order_svc", "book_repo", "cart_repo", "order_repo", "hibernate"]
+    },
+    {
+      "kind": "security-group",
+      "label": "Controller Layer (@CrossOrigin)",
+      "wraps": ["book_ctrl", "cart_ctrl", "order_ctrl"]
+    },
+    {
+      "kind": "security-group",
+      "label": "Service Layer (Business Logic)",
+      "wraps": ["book_svc", "cart_svc", "order_svc"]
+    },
+    {
+      "kind": "security-group",
+      "label": "Repository Layer (Spring Data JPA)",
+      "wraps": ["book_repo", "cart_repo", "order_repo"]
+    }
+  ],
+  "connections": [
+    { "from": "browser", "to": "tomcat", "label": "HTTP/JSON", "variant": "emphasis" },
+    { "from": "postman", "to": "tomcat", "label": "REST", "variant": "dashed" },
+    { "from": "tomcat", "to": "book_ctrl" },
+    { "from": "tomcat", "to": "cart_ctrl" },
+    { "from": "tomcat", "to": "order_ctrl" },
+    { "from": "book_ctrl", "to": "book_svc", "label": "delegates" },
+    { "from": "cart_ctrl", "to": "cart_svc", "label": "delegates" },
+    { "from": "order_ctrl", "to": "order_svc", "label": "delegates" },
+    { "from": "book_svc", "to": "book_repo", "label": "CRUD" },
+    { "from": "cart_svc", "to": "cart_repo", "label": "save" },
+    { "from": "order_svc", "to": "order_repo", "label": "persist" },
+    { "from": "book_repo", "to": "hibernate" },
+    { "from": "cart_repo", "to": "hibernate" },
+    { "from": "order_repo", "to": "hibernate" },
+    { "from": "hibernate", "to": "mysql", "label": "JDBC/TCP", "variant": "emphasis" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Presentation Layer",
+      "items": [
+        "Embedded Tomcat on port 8080, auto-configured by Spring Boot",
+        "DispatcherServlet routes /books, /cart, /orders to @RestController beans",
+        "Static assets from resources/static/ (index.html, admin.html)",
+        "Uploaded cover images served via WebMvcConfigurer: /uploads/** → file:uploads/",
+        "@CrossOrigin on all controllers enables browser CORS for any origin",
+        "All responses wrapped in ApiResponse<T> {success, message, data} via Jackson serializer"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Business Logic Layer",
+      "items": [
+        "BookService: findAll, save, deleteById — direct CRUD delegation to BookRepository",
+        "CartService.addToCart: findById(bookId) → validate qty ≤ book.quantity → save CartItem",
+        "OrderService.placeOrder: fetchCart → validate each item stock → accumulate total → deduct book.quantity → wipe cart → save Order",
+        "OrderService touches 3 DB tables: reads cart_item, updates book, deletes cart_item, inserts orders",
+        "BookController.uploadImage: MultipartFile → uploads/<timestamp>_<name> → returns public URL string",
+        "Constructor injection for all services — no field injection, no try-catch in controllers"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Data Access & Persistence",
+      "items": [
+        "JpaRepository interfaces → full CRUD auto-generated at runtime, zero implementation code",
+        "OrderRepository.findByUserId: derived query parsed from method name → WHERE user_id = ?",
+        "Hibernate 7.x (Jakarta): @Entity → DDL auto-update on startup, entity lifecycle, SQL generation",
+        "HikariCP: high-performance JDBC connection pool, auto-managed by Spring Boot",
+        "MySQL 8.0+ (InnoDB): ACID transactions, FK constraints (cart_item.book_id → book.id)",
+        "@Table(name=\"orders\"): avoids MySQL reserved keyword conflict with ORDER BY"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Error Handling (GlobalExceptionHandler)",
+      "items": [
+        "@ControllerAdvice: AOP-based centralized exception interception across all controllers",
+        "RuntimeException → HTTP 400 Bad Request + ApiResponse{false, ex.getMessage(), null}",
+        "Exception catch-all → HTTP 500 + ApiResponse{false, \"Something went wrong\", null}",
+        "Business errors: \"Book not found\", \"Stock not available\", \"Cart is empty\"",
+        "No try-catch in controllers — all errors flow through the global handler automatically",
+        "System errors concealed from clients — stack traces never leaked to the frontend"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Database Schema (3 Tables)",
+      "items": [
+        "book: id (PK, AI) | title | author | price (DOUBLE) | quantity (INT) | image_url (VARCHAR)",
+        "cart_item: id (PK, AI) | quantity (INT) | book_id (FK → book.id) — @ManyToOne JPA relationship",
+        "orders: id (PK, AI) | total_price (DOUBLE) | user_id (VARCHAR, NOT NULL constraint)",
+        "Hibernate DDL auto-update creates/alters tables from @Entity annotations on JVM startup",
+        "spring.jpa.show-sql=true logs all generated SQL statements to console for debugging"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "REST API (8 Endpoints)",
+      "items": [
+        "GET /books → catalog | POST /books → add book | DELETE /books/{id} → remove book",
+        "POST /books/upload → multipart image upload, returns publicly served URL string",
+        "POST /cart/{id}/{qty} → add to cart with stock validation | GET /cart → view all cart items",
+        "POST /orders/{userId} → atomic checkout with stock deduction | GET /orders/{userId} → history",
+        "JSON via @RequestBody; path params via @PathVariable; files via @RequestParam MultipartFile"
+      ]
+    }
+  ]
+}

@@ -15,10 +15,7 @@ public class CartItem {
     @JoinColumn(name = "book_id")
     private Book book;
 
-    // ✅ DEFAULT CONSTRUCTOR
     public CartItem() {}
-
-    // ✅ GETTERS
 
     public Long getId() {
         return id;
@@ -28,11 +25,9 @@ public class CartItem {
         return quantity;
     }
 
-    public Book getBook() {   // 🔥 THIS WAS MISSING
+    public Book getBook() {
         return book;
     }
-
-    // ✅ SETTERS
 
     public void setId(Long id) {
         this.id = id;
@@ -42,7 +37,7 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public void setBook(Book book) {  // 🔥 ALSO IMPORTANT
+    public void setBook(Book book) {
         this.book = book;
     }
 }

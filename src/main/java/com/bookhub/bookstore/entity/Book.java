@@ -10,15 +10,16 @@ public class Book {
     private Long id;
 
     private String title;
+
     private String author;
+
     private double price;
+
     private int quantity;
+
     private String imageUrl;
 
-    // ✅ DEFAULT CONSTRUCTOR
     public Book() {}
-
-    // 🔹 GETTERS
 
     public Long getId() {
         return id;
@@ -36,15 +37,13 @@ public class Book {
         return price;
     }
 
-    public int getQuantity() {   // 🔥 THIS WAS MISSING
+    public int getQuantity() {
         return quantity;
     }
 
     public String getImageUrl() {
         return imageUrl;
     }
-
-    // 🔹 SETTERS
 
     public void setId(Long id) {
         this.id = id;
@@ -62,7 +61,7 @@ public class Book {
         this.price = price;
     }
 
-    public void setQuantity(int quantity) {  // 🔥 ALSO IMPORTANT
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 

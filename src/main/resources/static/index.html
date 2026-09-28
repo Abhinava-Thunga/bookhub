@@ -1,255 +1,466 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>BookHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookHub - Online Bookstore</title>
 
   <style>
 
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
       background: #f4f6f9;
+      color: #333;
     }
 
-    /* HEADER */
     header {
       background: linear-gradient(135deg, #1d3557, #457b9d);
       color: white;
-      padding: 15px 20px;
+      padding: 15px 25px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.6rem;
     }
 
     .cart-btn {
       background: #e63946;
       border: none;
-      padding: 10px 15px;
+      padding: 10px 18px;
       color: white;
-      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 25px;
       cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+      box-shadow: 0 3px 8px rgba(230, 57, 70, 0.4);
     }
 
-    /* GRID */
+    .cart-btn:hover {
+      background: #d62828;
+      transform: translateY(-1px);
+    }
+
     .container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      padding: 20px;
-      gap: 20px;
+      padding: 25px;
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    /* CARD */
     .card {
       background: white;
-      border-radius: 15px;
-      padding: 15px;
+      border-radius: 12px;
+      padding: 16px;
       text-align: center;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
     }
 
     .card img {
       width: 100%;
-      height: 200px;
+      height: 220px;
       object-fit: cover;
+      border-radius: 8px;
+      background: #e9ecef;
     }
 
-    .price { color: green; }
-    .stock { color: #555; }
-    .cart-info { color: red; }
+    .card h3 {
+      margin: 12px 0 6px 0;
+      font-size: 1.15rem;
+      color: #1d3557;
+    }
 
-    /* INPUT */
-    input {
-      width: 60px;
-      font-size: 13px;
-      font-weight: 300;
+    .card p {
+      margin: 4px 0;
+      font-size: 0.9rem;
+    }
+
+    .price {
+      color: #2a9d8f;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .stock {
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    .cart-info {
+      color: #e63946;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    input[type="number"] {
+      width: 70px;
+      padding: 6px;
+      font-size: 14px;
       text-align: center;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      margin: 8px auto 4px auto;
     }
 
-    /* BUTTON */
-    button {
+    button.action-btn {
       margin-top: 8px;
-      padding: 8px;
+      padding: 10px 14px;
       border: none;
+      border-radius: 6px;
       background: #1d3557;
       color: white;
+      font-weight: 600;
       cursor: pointer;
+      transition: background 0.2s;
     }
 
-    /* CART PANEL */
+    button.action-btn:hover {
+      background: #457b9d;
+    }
+
     #cartPanel {
       position: fixed;
-      right: -400px;
+      right: -420px;
       top: 0;
-      width: 350px;
+      width: 360px;
       height: 100%;
       background: white;
-      padding: 20px;
-      transition: 0.3s;
+      box-sizing: border-box;
+      padding: 25px;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+      transition: right 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+      z-index: 1000;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
 
     #cartPanel.active {
       right: 0;
     }
 
+    #cartPanel h2 {
+      margin-top: 0;
+      color: #1d3557;
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-cart-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #6c757d;
+    }
+
+    #cart {
+      flex: 1;
+      margin: 15px 0;
+      line-height: 1.8;
+      font-size: 0.95rem;
+    }
+
+    #total {
+      color: #1d3557;
+      border-top: 2px solid #e9ecef;
+      padding-top: 12px;
+      font-size: 1.25rem;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 12px;
+      background: #2a9d8f;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .checkout-btn:hover {
+      background: #21867a;
+    }
+
+    .orders-section {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .order-card {
+      margin: 10px 0;
+      padding: 14px 18px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 4px solid #1d3557;
+    }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>📚 BookHub</h1>
-  <button class="cart-btn" onclick="toggleCart()">
-    🛒 Cart (<span id="cartCount">0</span>)
-  </button>
-</header>
+  <header>
+    <h1>📚 BookHub</h1>
 
-<div id="books" class="container"></div>
+    <button class="cart-btn" onclick="toggleCart()" id="openCartBtn">
+      🛒 Cart (<span id="cartCount">0</span>)
+    </button>
+  </header>
 
-<!-- CART -->
-<div id="cartPanel">
-  <h2>Cart</h2>
-  <div id="cart"></div>
-  <h3 id="total"></h3>
-  <button onclick="placeOrder()">Place Order</button>
-</div>
+  <main>
+    <div id="books" class="container">
 
-<!-- ORDER HISTORY -->
-<h2 style="text-align:center">📦 Order History</h2>
-<div id="orders"></div>
+    </div>
+  </main>
 
-<script>
+  <aside id="cartPanel" aria-label="Shopping Cart">
+    <h2>
+      <span>🛒 Your Cart</span>
+      <button class="close-cart-btn" onclick="toggleCart()" title="Close Cart">✖</button>
+    </h2>
 
-  const userId = "user1";
+    <div id="cart"></div>
 
-  // LOAD BOOKS
-  async function loadBooks() {
+    <h3 id="total">Total: ₹0</h3>
 
-    let res = await fetch("http://localhost:8080/books");
-    let data = await res.json();
+    <button class="checkout-btn" onclick="placeOrder()" id="checkoutBtn">
+      Place Order
+    </button>
+  </aside>
 
-    let cartRes = await fetch("http://localhost:8080/cart");
-    let cart = await cartRes.json();
+  <section class="orders-section">
+    <h2 style="text-align:center; color:#1d3557;">📦 Order History</h2>
+    <div id="orders">
 
-    let cartMap = {};
-    cart.forEach(c => cartMap[c.book.id] = c.quantity);
+    </div>
+  </section>
 
-    let html = "";
+  <script>
 
-    data.data.forEach(b => {
+    const userId = "user1";
 
-      let cartQty = cartMap[b.id] || 0;
+    const DEFAULT_BOOK_COVER = "data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22250%22%20viewBox%3D%220%200%20200%20250%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%231d3557%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2245%25%22%20fill%3D%22%23ffffff%22%20font-family%3D%22sans-serif%22%20font-size%3D%2236%22%20text-anchor%3D%22middle%22%3E%F0%9F%93%96%3C%2Ftext%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2265%25%22%20fill%3D%22%23e9ecef%22%20font-family%3D%22sans-serif%22%20font-size%3D%2214%22%20font-weight%3D%22600%22%20text-anchor%3D%22middle%22%3EBookHub%3C%2Ftext%3E%3C%2Fsvg%3E";
 
-      html += `
-    <div class="card">
-      <img src="${b.imageUrl}">
-      <h3>${b.title}</h3>
-      <p>${b.author}</p>
-      <p class="price">₹${b.price}</p>
-      <p class="stock">Stock: ${b.quantity}</p>
-      <p class="cart-info">In Cart: ${cartQty}</p>
+    function resolveCoverUrl(url) {
+      if (!url || typeof url !== "string") return DEFAULT_BOOK_COVER;
+      let trimmed = url.trim();
+      if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/uploads/") || trimmed.startsWith("uploads/")) {
+        return trimmed;
+      }
+      return DEFAULT_BOOK_COVER;
+    }
 
-      <input type="number" id="qty-${b.id}" placeholder="qty">
+    async function loadBooks() {
+      try {
+        let res = await fetch("http://localhost:8080/books");
+        let data = await res.json();
 
-      <button onclick="addToCart(${b.id}, ${b.quantity})">
-        Add
-      </button>
-    </div>`;
-    });
+        let cartRes = await fetch("http://localhost:8080/cart");
+        let cart = await cartRes.json();
 
-    document.getElementById("books").innerHTML = html;
-  }
+        let cartMap = {};
+        if (Array.isArray(cart)) {
+          cart.forEach(c => {
+            if (c.book && c.book.id) {
+              cartMap[c.book.id] = c.quantity;
+            }
+          });
+        }
 
-  // ADD TO CART
-  async function addToCart(id, stock) {
+        let html = "";
 
-    let qty = parseInt(document.getElementById("qty-" + id).value);
+        if (data.data && data.data.length > 0) {
+          data.data.forEach(b => {
+            let cartQty = cartMap[b.id] || 0;
+            let coverUrl = resolveCoverUrl(b.imageUrl);
 
-    if (!qty || qty <= 0) return alert("Enter qty");
+            html += `
+              <div class="card" id="book-card-${b.id}">
+                <img src="${coverUrl}" alt="${b.title}" onerror="this.onerror=null;this.src='${DEFAULT_BOOK_COVER}';">
+                <h3>${b.title}</h3>
+                <p>by <em>${b.author}</em></p>
+                <p class="price">₹${b.price}</p>
+                <p class="stock">Available Stock: ${b.quantity}</p>
+                <p class="cart-info">In Cart: ${cartQty}</p>
 
-    if (qty > stock) return alert("Not enough stock");
+                <input type="number" id="qty-${b.id}" min="1" max="${b.quantity}" placeholder="Qty" value="1">
 
-    await fetch(`http://localhost:8080/cart/${id}/${qty}`, { method: "POST" });
+                <button class="action-btn" onclick="addToCart(${b.id}, ${b.quantity})">
+                  Add to Cart
+                </button>
+              </div>`;
+          });
+        } else {
+          html = "<p style='text-align:center;grid-column:1/-1;'>No books available in the catalog.</p>";
+        }
 
-    let name = document.querySelector(`#qty-${id}`)
-            .closest(".card")
-            .querySelector("h3").innerText;
+        document.getElementById("books").innerHTML = html;
+      } catch (err) {
+        console.error("Failed to load books:", err);
+      }
+    }
 
-    alert(`${qty} × ${name} added`);
+    async function addToCart(id, stock) {
+      let inputElement = document.getElementById("qty-" + id);
+      let qty = parseInt(inputElement.value);
 
-    loadBooks();
-    loadCart();
-  }
+      if (!qty || qty <= 0) {
+        return alert("Please enter a valid quantity greater than 0.");
+      }
 
-  // LOAD CART
-  async function loadCart() {
+      if (qty > stock) {
+        return alert("Cannot add " + qty + " items. Only " + stock + " in stock!");
+      }
 
-    let res = await fetch("http://localhost:8080/cart");
-    let cart = await res.json();
+      try {
+        let res = await fetch(`http://localhost:8080/cart/${id}/${qty}`, { method: "POST" });
+        let result = await res.json();
 
-    let html = "";
-    let total = 0;
-    let count = 0;
+        if (res.ok) {
+          let cardElement = inputElement.closest(".card");
+          let title = cardElement ? cardElement.querySelector("h3").innerText : "Book";
+          alert(`Added ${qty} × "${title}" to your cart!`);
 
-    cart.forEach(item => {
-      total += item.book.price * item.quantity;
-      count += item.quantity;
+          loadBooks();
+          loadCart();
+        } else {
+          alert("Error: " + (result.message || "Failed to add to cart."));
+        }
+      } catch (err) {
+        console.error("Cart error:", err);
+        alert("Failed to connect to backend server.");
+      }
+    }
 
-      html += `${item.book.title} × ${item.quantity}<br>`;
-    });
+    async function loadCart() {
+      try {
+        let res = await fetch("http://localhost:8080/cart");
+        let cart = await res.json();
 
-    document.getElementById("cart").innerHTML = html;
-    document.getElementById("total").innerText = "₹" + total;
-    document.getElementById("cartCount").innerText = count;
-  }
+        let html = "";
+        let total = 0;
+        let count = 0;
 
-  // PLACE ORDER
-  async function placeOrder() {
+        if (Array.isArray(cart) && cart.length > 0) {
+          cart.forEach(item => {
+            let itemTotal = item.book.price * item.quantity;
+            total += itemTotal;
+            count += item.quantity;
 
-    let res = await fetch(`http://localhost:8080/orders/${userId}`, {
-      method: "POST"
-    });
+            html += `
+              <div style="border-bottom:1px solid #eee; padding:8px 0;">
+                <strong>${item.book.title}</strong><br>
+                <small>${item.quantity} × ₹${item.book.price} = <strong>₹${itemTotal.toFixed(2)}</strong></small>
+              </div>`;
+          });
+        } else {
+          html = "<p style='color:#777;'>Your cart is currently empty.</p>";
+        }
 
-    if (!res.ok) return alert("Error");
+        document.getElementById("cart").innerHTML = html;
+        document.getElementById("total").innerText = "Total: ₹" + total.toFixed(2);
+        document.getElementById("cartCount").innerText = count;
+      } catch (err) {
+        console.error("Failed to load cart:", err);
+      }
+    }
 
-    alert("Order placed");
+    async function placeOrder() {
+      try {
+        let res = await fetch(`http://localhost:8080/orders/${userId}`, {
+          method: "POST"
+        });
 
-    document.getElementById("cartPanel").classList.remove("active");
+        let data = await res.json();
+
+        if (!res.ok) {
+          return alert("Checkout Failed: " + (data.message || "Unable to place order."));
+        }
+
+        alert(`Order #${data.data.id} placed successfully! Total Amount: ₹${data.data.totalPrice}`);
+
+        document.getElementById("cartPanel").classList.remove("active");
+
+        loadBooks();
+        loadCart();
+        loadOrders();
+      } catch (err) {
+        console.error("Order error:", err);
+        alert("Failed to connect to backend server during checkout.");
+      }
+    }
+
+    async function loadOrders() {
+      try {
+        let res = await fetch(`http://localhost:8080/orders/${userId}`);
+        let data = await res.json();
+
+        let html = "";
+
+        if (data.data && data.data.length > 0) {
+          data.data.forEach(o => {
+            html += `
+              <div class="order-card">
+                <div>
+                  <strong>Order #${o.id}</strong>
+                  <div style="font-size:0.85rem;color:#666;">Customer: ${o.userId}</div>
+                </div>
+                <div style="font-size:1.1rem;font-weight:700;color:#2a9d8f;">
+                  ₹${o.totalPrice.toFixed(2)}
+                </div>
+              </div>`;
+          });
+        } else {
+          html = "<p style='text-align:center;color:#888;'>No previous orders found.</p>";
+        }
+
+        document.getElementById("orders").innerHTML = html;
+      } catch (err) {
+        console.error("Failed to load orders:", err);
+      }
+    }
+
+    function toggleCart() {
+      let panel = document.getElementById("cartPanel");
+      panel.classList.toggle("active");
+      if (panel.classList.contains("active")) {
+        loadCart();
+      }
+    }
 
     loadBooks();
     loadCart();
     loadOrders();
-  }
-
-  // LOAD ORDERS
-  async function loadOrders() {
-
-    let res = await fetch(`http://localhost:8080/orders/${userId}`);
-    let data = await res.json();
-
-    let html = "";
-
-    data.data.forEach(o => {
-      html += `<div style="margin:10px;padding:10px;background:white;">
-      Order #${o.id} - ₹${o.totalPrice}
-    </div>`;
-    });
-
-    document.getElementById("orders").innerHTML = html;
-  }
-
-  // TOGGLE CART
-  function toggleCart() {
-    document.getElementById("cartPanel").classList.toggle("active");
-    loadCart();
-  }
-
-  // INIT
-  loadBooks();
-  loadCart();
-  loadOrders();
-
-</script>
+  </script>
 
 </body>
 </html>
